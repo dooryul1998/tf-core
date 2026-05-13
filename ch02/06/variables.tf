@@ -1,7 +1,7 @@
 # variables.tf
 variable "instance_type" {
   type        = string
-  default     = "t3.micro"
+  default     = "t3.small"
   description = "EC2 Instance Type (t3.micro, t3.small, t3.medium)"
 
   validation {
