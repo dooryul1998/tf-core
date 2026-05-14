@@ -1,5 +1,5 @@
 locals {
   org       = "tf-core"
-  project   = "lab02"
+  project   = "lab03"
   namespace = "${local.org}-${local.project}"
 }
