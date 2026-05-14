@@ -15,7 +15,7 @@ sudo -u ec2-user bash -lc "
 set -euo pipefail
 cd /home/ec2-user
 rm -rf workspace
-git clone --filter=blob:none --sparse https://github.com/{github-account}/tf-core.git workspace
+git clone --filter=blob:none --sparse https://github.com/dooryul1998/tf-core.git workspace
 cd workspace
 git sparse-checkout init --no-cone
 git sparse-checkout set workloads/gallery-spring-boot
