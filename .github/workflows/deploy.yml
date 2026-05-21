@@ -3,13 +3,13 @@ name: gallery-1 deploy
 on:
   push:             #trigger: push 시
     branches: [main]
-    paths: ["lab01/infra/*.tf"]
+    paths: ["ch10/02/lab01/*.tf"]
   
   workflow_dispatch:
 
 env:
   TF_VERSION: "1.14.7"
-  WORKING_DIR: "lab01/infra"
+  WORKING_DIR: "ch10/02/lab01"
 
 jobs:
   my_apply:           #job 정의
