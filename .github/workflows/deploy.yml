@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths: ["ch10/02/lab01/*.tf"]
   
-  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
 
 env:
   TF_VERSION: "1.14.7"
+  AWS_REGION: "ap-northeast-2"
   WORKING_DIR: "ch10/02/lab01"
 
 jobs:
@@ -26,8 +30,14 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_IAMROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -input=false -auto-approve
