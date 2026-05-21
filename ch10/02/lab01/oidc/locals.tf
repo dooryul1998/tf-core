@@ -3,7 +3,7 @@ locals {
   project   = "lab01"
   namespace = "${local.org}-${local.project}"
 
-  github_repo = "bespin-multi-cloud-3-aws/gallery"
+  github_repo = "dooryul1998/tf-core"
 
   iamrole = {
     name       = "gha"
