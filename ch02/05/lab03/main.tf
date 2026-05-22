@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 resource "aws_security_group" "this" {
-  name = "${local.project}-sg-instance-${local.instance.name}"
+  name   = "${local.project}-sg-instance-${local.instance.name}"
   vpc_id = local.vpc_id
 
   ingress {
@@ -47,7 +47,7 @@ resource "aws_instance" "this" {
   ami                         = local.instance.ami
   instance_type               = local.instance.instance_type
   associate_public_ip_address = local.instance.associate_public_ip_address
-  subnet_id = local.instance.subnet_id
+  subnet_id                   = local.instance.subnet_id
 
   vpc_security_group_ids = [aws_security_group.this.id]
   iam_instance_profile   = aws_iam_instance_profile.this.name
