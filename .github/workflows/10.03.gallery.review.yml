@@ -42,7 +42,7 @@ jobs:
         run: terraform init -input=false -backend-config="env.dev.backend.hcl"
 
 
-        name: Create Temporary tfvars File
+      - name: Create Temporary tfvars File
         # 깃허브 액션이 돌아가는 임시 공간에 직접 내용을 써서 파일을 만듭니다.
         run: |
           cat <<EOF > env.dev.tfvars
