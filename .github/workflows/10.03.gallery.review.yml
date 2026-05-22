@@ -1,0 +1,98 @@
+name: "10.03-gallery review"
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+    paths: ["ch10/gallery/*.tf"]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+env:
+  TF_VERSION: "1.14.7"
+  AWS_REGION: "ap-northeast-2"
+  WORKING_DIR: "ch10/gallery"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_IAMROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init -input=false -backend-config="env.dev.backend.hcl"
+
+
+      - name: Create Temporary tfvars File
+        # 깃허브 액션이 돌아가는 임시 공간에 직접 내용을 써서 파일을 만듭니다.
+        run: |
+          cat <<EOF > env.dev.tfvars
+          env                        = "dev"
+          infra_lt_instance_type     = "t3.micro"
+          infra_asg_max_size         = 3
+          infra_asg_min_size         = 1
+          infra_asg_desired_capacity = 2
+          EOF
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -input=false -no-color -var-file="env.dev.tfvars"
+        continue-on-error: true
+
+      - name: Post Plan to PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan
+            \`\`\`
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+            *Triggered by @${{ github.actor }}*`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Terraform Plan')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: output
+              });
+            }
+
+      - name: Fail if Plan Failed
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
