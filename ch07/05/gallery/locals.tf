@@ -2,8 +2,8 @@ locals {
   org         = "tf-core"
   project     = "gallery"
   environment = var.env
-  
-  namespace   = "${local.org}-${local.project}-${local.environment}"
+
+  namespace = "${local.org}-${local.project}-${local.environment}"
 
   infra = {
     lb = {

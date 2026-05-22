@@ -23,7 +23,7 @@ locals {
     name = "web"
 
     image_id      = data.aws_ami.amazon_linux.id
-    instance_type    = var.lt_instance_type
+    instance_type = var.lt_instance_type
 
     iam_instance_profile = {
       name = var.lt_iam_instance_profile_name
