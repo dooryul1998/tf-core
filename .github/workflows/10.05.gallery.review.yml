@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
-    paths: ["ch10//05/gallery/*.tf"]
+    paths: ["ch10/05/gallery/*.tf"]
 
 permissions:
   contents: read
