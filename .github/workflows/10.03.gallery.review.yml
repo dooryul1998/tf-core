@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
-    paths: ["ch10/03/gallery/*.tf"]
+    paths: ["ch10/gallery/*.tf"]
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ permissions:
 env:
   TF_VERSION: "1.14.7"
   AWS_REGION: "ap-northeast-2"
-  WORKING_DIR: "ch10/03/gallery"
+  WORKING_DIR: "ch10/gallery"
 
 jobs:
   plan:
